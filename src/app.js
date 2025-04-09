@@ -1,10 +1,11 @@
 import express from "express";
 import conectaNaDataBase from "./config/dbConnect.js";
+import livro from "./models/Livro.js";
 
 const conexao = await conectaNaDataBase();
 
 conexao.on("error", (erro) => {
-  console.error("Erro de conexão\n", error);
+  console.error("Erro de conexão\n", erro);
 })
 
 conexao.once("open", () => {
@@ -14,18 +15,14 @@ conexao.once("open", () => {
 const app = express();
 app.use(express.json());
 
-function buscaLivro(id) {
-  return livros.findIndex((livro) => {
-    return livro.id === Number(id);
-  });
-}
-
 app.get("/", (req, res) => {
   return res.status(200).send("Curso de Node.JS");
 });
 
-app.get("/livros", (req, res) => {
-  return res.status(200).json(livros);
+app.get("/livros", async (req, res) => {
+  const listaLivros = await livro.find({});
+  console.log(listaLivros);
+  return res.status(200).json(listaLivros);
 });
 
 app.get("/livros/:id", (req, res) => {
